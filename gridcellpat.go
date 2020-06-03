@@ -18,8 +18,8 @@ var test gridcell.Grid_layer
 var data [][][]float64
 
 func main() {
-	placedevsizeS := []string{"030", "025", "020", "015", "010"}
-	placedevsizeF := []float64{0.3, 0.25, 0.2, 0.15, 0.1}
+	placedevsizeS := []string{"032", "030", "028", "026"} //{"030", "025", "020", "015", "010"}
+	placedevsizeF := []float64{0.32, 0.3, 0.28, 0.26}     //{0.3, 0.25, 0.2, 0.15, 0.1}
 	norm := []bool{false, true}
 	normS := []string{"Nnorm", "Norm"}
 	SpRan := []bool{false, true}      //
@@ -41,13 +41,13 @@ func main() {
 			for idxN, Nor := range norm {
 				test.Init(neunum)
 				str, _ := os.Getwd()
-				str = str + "/figure/" + placedevsizeS[idx] + SpRanS[Ridx] + normS[idxN]
+				str = str + "/fi_0601/" + placedevsizeS[idx] + SpRanS[Ridx] + normS[idxN]
 				csvname := gi.FileName(placedevsizeS[idx] + SpRanS[Ridx] + normS[idxN] + ".csv")
 				for i := range test.Grlay {
 					if tr {
 						test.Grlay[i].Init(i%5+3.0, rand.Float64(), rand.Float64(), spacesize, 0.8, 0.6, placedevsizeFvalue)
 					} else {
-						test.Grlay[i].Init(i%5+3.0, (float64(i%5) / 5.0), (float64(i/25) / 5.0), spacesize, 0.8, 0.6, placedevsizeFvalue)
+						test.Grlay[i].Init(i%5+3.0, (float64((i/5)%5) / 5.0), (float64(i/25) / 5.0), spacesize, 0.8, 0.6, placedevsizeFvalue)
 					}
 					//fmt.Println(rand.Float64(), rand.Float64())
 					//fmt.Println(float64(i%5)/5.0, float64(i/25)/5.0)
@@ -86,7 +86,7 @@ func main() {
 							}
 							for k := 0; k < len(data[0][0]); k++ {
 								data[i][j][k] = math.Sqrt((data[i][j][k] * data[i][j][k]) / totalsum)
-								data[i][j][k] *= float64(2)
+								data[i][j][k] *= float64(6)
 							}
 						}
 					}
