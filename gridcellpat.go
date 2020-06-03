@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	gridcell "github.com/juishiang/GridCell"
+	"golang.org/x/exp/errors/fmt"
 
 	"github.com/cpmech/gosl/plt"
 	"github.com/emer/etable/etable"
@@ -18,12 +19,12 @@ var test gridcell.Grid_layer
 var data [][][]float64
 
 func main() {
-	placedevsizeS := []string{"032", "030", "028", "026"} //{"030", "025", "020", "015", "010"}
-	placedevsizeF := []float64{0.32, 0.3, 0.28, 0.26}     //{0.3, 0.25, 0.2, 0.15, 0.1}
-	norm := []bool{false, true}
-	normS := []string{"Nnorm", "Norm"}
-	SpRan := []bool{false, true}      //
-	SpRanS := []string{"std", "Rand"} //
+	placedevsizeS := []string{"032", "030", "028", "026", "025", "020", "015", "010"} //{"030"}
+	placedevsizeF := []float64{0.32, 0.3, 0.28, 0.26, 0.25, 0.2, 0.15, 0.1}           //{0.3}
+	norm := []bool{true, false}
+	normS := []string{"Norm", "Nnorm"}
+	SpRan := []bool{false}    //{, true}
+	SpRanS := []string{"std"} //{, "Rand"}
 	var spacesize float64 = 10
 	var neunum int64 = 125
 	stepsize := 0.1
@@ -41,7 +42,7 @@ func main() {
 			for idxN, Nor := range norm {
 				test.Init(neunum)
 				str, _ := os.Getwd()
-				str = str + "/fi_0601/" + placedevsizeS[idx] + SpRanS[Ridx] + normS[idxN]
+				str = str + "/fi_0603/" + placedevsizeS[idx] + SpRanS[Ridx] + normS[idxN]
 				csvname := gi.FileName(placedevsizeS[idx] + SpRanS[Ridx] + normS[idxN] + ".csv")
 				for i := range test.Grlay {
 					if tr {
@@ -77,6 +78,7 @@ func main() {
 				}
 				////////end position
 				//Normalize the input pattern for each site
+				var maxv float64 = 0.0
 				if Nor {
 					for i := 0; i < len(data); i++ {
 						for j := 0; j < len(data[0]); j++ {
@@ -86,10 +88,22 @@ func main() {
 							}
 							for k := 0; k < len(data[0][0]); k++ {
 								data[i][j][k] = math.Sqrt((data[i][j][k] * data[i][j][k]) / totalsum)
-								data[i][j][k] *= float64(6)
+								if data[i][j][k] > maxv {
+									maxv = data[i][j][k]
+								}
 							}
 						}
 					}
+					fmt.Println(maxv)
+					invmax := 1 / maxv
+					for i := 0; i < len(data); i++ {
+						for j := 0; j < len(data[0]); j++ {
+							for k := 0; k < len(data[0][0]); k++ {
+								data[i][j][k] = data[i][j][k] * invmax
+							}
+						}
+					}
+
 				}
 
 				////////put the data to etable and tensor
